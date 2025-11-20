@@ -1,0 +1,16 @@
+# OCR and Image Processing
+pytesseract==0.3.10
+pdf2image==1.17.0
+Pillow==10.4.0
+
+# Database
+# SQLite is built into Python, no additional dependency needed
+
+# Data Analysis and ML
+networkx==3.2.1
+pandas==2.1.4
+scikit-learn==1.3.2
+spacy==3.7.2
+
+# Additional utilities for the investigation system
+numpy==1.26.2
