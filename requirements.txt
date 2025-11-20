@@ -1,0 +1,15 @@
+# Core dependencies for the investigation system
+# No external dependencies required - uses Python standard library only
+
+# The system uses:
+# - sqlite3 (built-in)
+# - pathlib (built-in)
+# - hashlib (built-in)
+# - re (built-in)
+# - datetime (built-in)
+# - collections (built-in)
+
+# For future enhancements, you might want to add:
+# numpy>=1.21.0
+# matplotlib>=3.4.0
+# networkx>=2.6.0
