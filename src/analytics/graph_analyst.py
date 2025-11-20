@@ -193,14 +193,23 @@ class GraphAnalyst:
         """
         print(f"\nExporting graph to: {output_path}")
         
+        # Create a copy of the graph for export
+        export_graph = self.graph.copy()
+        
         # Add node attributes (document count)
-        for node in self.graph.nodes():
-            self.graph.nodes[node]['doc_count'] = len(self.entity_documents[node])
+        for node in export_graph.nodes():
+            export_graph.nodes[node]['doc_count'] = len(self.entity_documents[node])
+        
+        # Convert edge document lists to counts (GEXF can't serialize lists)
+        for u, v, data in export_graph.edges(data=True):
+            if 'documents' in data:
+                data['doc_count'] = len(data['documents'])
+                del data['documents']
         
         # Write graph to GEXF
-        nx.write_gexf(self.graph, output_path)
+        nx.write_gexf(export_graph, output_path)
         
-        print(f"Exported graph with {self.graph.number_of_nodes()} nodes and {self.graph.number_of_edges()} edges")
+        print(f"Exported graph with {export_graph.number_of_nodes()} nodes and {export_graph.number_of_edges()} edges")
     
     def run_analysis(self, limit: int = None, output_dir: str = ".") -> None:
         """
