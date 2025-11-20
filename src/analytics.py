@@ -131,6 +131,8 @@ class BenfordsLawAnalyzer:
         Returns:
             First digit (1-9)
         """
+        # Handle negative numbers by taking absolute value
+        number = abs(number)
         while number >= 10:
             number //= 10
         return number

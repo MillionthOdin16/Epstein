@@ -61,7 +61,7 @@ class InvestigationOrchestrator:
             # Step 1: Ingest new files
             self.log("## Step 1: File Ingestion")
             self.log("-" * 60)
-            new_files, entities, all_numbers = self.ingest_files()
+            new_files, entities, numbers_by_file = self.ingest_files()
             self.log("")
             
             # Step 2: Run analytics
@@ -74,7 +74,7 @@ class InvestigationOrchestrator:
             self.log("## Step 3: Decision Logic")
             self.log("-" * 60)
             new_leads = self.apply_decision_logic(bridges, entities)
-            suspicious_docs = self.detect_suspicious_documents(all_numbers)
+            suspicious_docs = self.detect_suspicious_documents(numbers_by_file)
             self.log("")
             
             # Step 4: Generate report
@@ -173,12 +173,12 @@ class InvestigationOrchestrator:
             
         return new_leads
         
-    def detect_suspicious_documents(self, all_numbers: List[List[int]]) -> List[Dict]:
+    def detect_suspicious_documents(self, numbers_by_file: Dict[int, List[int]]) -> List[Dict]:
         """
         Detect suspicious documents using Benford's Law.
         
         Args:
-            all_numbers: List of number lists (one per document)
+            numbers_by_file: Dictionary mapping file IDs to their number lists
             
         Returns:
             List of suspicious document records
@@ -186,32 +186,17 @@ class InvestigationOrchestrator:
         analyzer = BenfordsLawAnalyzer()
         suspicious_count = 0
         
-        # Get all files that were just ingested
-        cursor = self.db.conn.cursor()
-        cursor.execute('''
-            SELECT f.id, f.filepath, f.filename 
-            FROM files f
-            LEFT JOIN documents d ON f.id = d.file_id
-            WHERE d.id IS NULL
-            ORDER BY f.id DESC
-        ''')
-        
-        unanalyzed_files = cursor.fetchall()
-        
-        # Match files with their number lists (simplified approach)
-        for i, file_row in enumerate(unanalyzed_files):
-            if i < len(all_numbers):
-                numbers = all_numbers[i]
+        # Analyze each file that has numbers
+        for file_id, numbers in numbers_by_file.items():
+            if len(numbers) >= 30:  # Only analyze if enough numbers
+                is_violation, chi_squared, distribution = analyzer.detect_benfords_law_violation(numbers)
                 
-                if len(numbers) >= 30:  # Only analyze if enough numbers
-                    is_violation, chi_squared, distribution = analyzer.detect_benfords_law_violation(numbers)
-                    
-                    if is_violation:
-                        self.db.mark_document_suspicious(
-                            file_id=file_row['id'],
-                            benford_score=chi_squared
-                        )
-                        suspicious_count += 1
+                if is_violation:
+                    self.db.mark_document_suspicious(
+                        file_id=file_id,
+                        benford_score=chi_squared
+                    )
+                    suspicious_count += 1
         
         if suspicious_count > 0:
             self.log(f"⚠️  Marked {suspicious_count} documents as SUSPICIOUS")

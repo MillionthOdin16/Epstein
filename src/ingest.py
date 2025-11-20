@@ -10,7 +10,7 @@ import os
 import re
 import hashlib
 from pathlib import Path
-from typing import List, Set, Tuple
+from typing import List, Set, Tuple, Dict
 from database import InvestigationDB
 
 
@@ -135,11 +135,14 @@ class FileIngestor:
         
         # Pattern for numbers (including currency, percentages, etc.)
         # We want leading digits, so we extract full numbers
+        # Require at least 2 digits since Benford's Law is most applicable to multi-digit numbers
         number_pattern = r'\b\d{2,}\b'
         for match in re.finditer(number_pattern, text):
             try:
                 num = int(match.group(0))
-                if num >= 10:  # Only include numbers >= 10 for Benford's Law
+                # Benford's Law applies to numbers >= 10 (need at least 2 significant digits)
+                # Single-digit numbers don't have a "first digit" in the Benford sense
+                if num >= 10:
                     numbers.append(num)
             except ValueError:
                 continue
@@ -184,23 +187,23 @@ class FileIngestor:
         
         return file_id, entities, numbers
         
-    def ingest_new_files(self) -> Tuple[int, Set[str], List[List[int]]]:
+    def ingest_new_files(self) -> Tuple[int, Set[str], Dict[int, List[int]]]:
         """
         Scan for and ingest all new files.
         
         Returns:
-            Tuple of (files_ingested, all_entities, all_numbers_by_file)
+            Tuple of (files_ingested, all_entities, numbers_by_file_id)
         """
         new_files = self.scan_for_new_files()
         
         if not new_files:
             print("✓ No new files to ingest")
-            return 0, set(), []
+            return 0, set(), {}
         
         print(f"📥 Found {len(new_files)} new files to ingest")
         
         all_entities = set()
-        all_numbers = []
+        numbers_by_file = {}
         files_ingested = 0
         
         for i, filepath in enumerate(new_files, 1):
@@ -208,7 +211,7 @@ class FileIngestor:
                 file_id, entities, numbers = self.ingest_file(filepath)
                 all_entities.update(entities)
                 if numbers:
-                    all_numbers.append(numbers)
+                    numbers_by_file[file_id] = numbers
                 files_ingested += 1
                 
                 if i % 100 == 0:
@@ -221,7 +224,7 @@ class FileIngestor:
         print(f"✓ Ingested {files_ingested} files")
         print(f"✓ Found {len(all_entities)} unique entities")
         
-        return files_ingested, all_entities, all_numbers
+        return files_ingested, all_entities, numbers_by_file
 
 
 def run_ingest(db_path: str = "investigation.db"):

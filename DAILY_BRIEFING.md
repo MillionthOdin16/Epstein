@@ -1,12 +1,12 @@
 # Daily Investigation Briefing
 
-**Generated:** 2025-11-20 23:41:17
+**Generated:** 2025-11-20 23:44:46
 
 ---
 
 ## Executive Summary
 
-- **Files Processed:** 5 total (2 new)
+- **Files Processed:** 5 total (5 new)
 - **Active Leads:** 1 total (1 new)
 - **Suspicious Documents:** 1
 - **Entities Tracked:** 34
@@ -25,10 +25,10 @@ Identified 1 new entities of interest:
 
 Flagged 1 documents for review:
 
-1. **TEST-001-MEETING_NOTES_002.txt**
-   - Path: `data/processed/files/TEST/001/TEST-001-MEETING_NOTES_002.txt`
+1. **TEST-001-SUSPICIOUS_DOC.txt**
+   - Path: `data/processed/files/TEST/001/TEST-001-SUSPICIOUS_DOC.txt`
    - Benford Score: 149.32
-   - Analyzed: 2025-11-20T23:40:23.720771
+   - Analyzed: 2025-11-20T23:44:46.834228
    - Reason: Numerical data shows anomalies (Benford's Law violation)
 
 ## 📋 All Active Leads
