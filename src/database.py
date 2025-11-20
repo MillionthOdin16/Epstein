@@ -11,13 +11,15 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional, List, Dict, Any, Tuple
 
-# Configure logging
-logging.basicConfig(
-    filename='error.log',
-    level=logging.ERROR,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+# Configure module-specific logger
 logger = logging.getLogger(__name__)
+if not logger.handlers:
+    handler = logging.FileHandler('error.log')
+    handler.setLevel(logging.ERROR)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    logger.setLevel(logging.ERROR)
 
 
 class DatabaseManager:
@@ -52,8 +54,7 @@ class DatabaseManager:
                     hash TEXT NOT NULL UNIQUE,
                     path TEXT NOT NULL,
                     raw_text TEXT,
-                    ingested_at TIMESTAMP NOT NULL,
-                    UNIQUE(hash)
+                    ingested_at TIMESTAMP NOT NULL
                 )
             """)
             

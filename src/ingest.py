@@ -22,13 +22,15 @@ except ImportError as e:
     logging.error(f"Missing required dependency: {e}")
     raise
 
-# Configure logging
-logging.basicConfig(
-    filename='error.log',
-    level=logging.ERROR,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+# Configure module-specific logger
 logger = logging.getLogger(__name__)
+if not logger.handlers:
+    handler = logging.FileHandler('error.log')
+    handler.setLevel(logging.ERROR)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    logger.setLevel(logging.ERROR)
 
 
 class DocumentIngester:
