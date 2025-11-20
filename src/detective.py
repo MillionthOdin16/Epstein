@@ -12,6 +12,11 @@ from collections import defaultdict
 
 logger = logging.getLogger(__name__)
 
+# Configuration constants
+MAX_TEXT_SIZE_FOR_SPACY = 1000000  # Maximum text size to process with spaCy (1MB)
+ENTITY_CONTEXT_WINDOW = 50  # Characters to include before and after entity for context
+RELATIONSHIP_PROXIMITY_THRESHOLD = 500  # Max character distance to consider entities related
+
 # Try to import spaCy
 try:
     import spacy
@@ -98,12 +103,12 @@ def _extract_entities_spacy(text: str, nlp) -> Dict[str, List[Tuple[str, str]]]:
     }
     
     # Process text with spaCy
-    doc = nlp(text[:1000000])  # Limit text size to avoid memory issues
+    doc = nlp(text[:MAX_TEXT_SIZE_FOR_SPACY])  # Limit text size to avoid memory issues
     
     for ent in doc.ents:
-        # Get context snippet (±50 characters around entity)
-        start_idx = max(0, ent.start_char - 50)
-        end_idx = min(len(text), ent.end_char + 50)
+        # Get context snippet (±ENTITY_CONTEXT_WINDOW characters around entity)
+        start_idx = max(0, ent.start_char - ENTITY_CONTEXT_WINDOW)
+        end_idx = min(len(text), ent.end_char + ENTITY_CONTEXT_WINDOW)
         context = text[start_idx:end_idx].replace('\n', ' ').strip()
         
         if ent.label_ == 'PERSON':
@@ -174,7 +179,7 @@ def _extract_entities_regex(text: str) -> Dict[str, List[Tuple[str, str]]]:
     return entities
 
 
-def _get_context(text: str, start: int, end: int, window: int = 50) -> str:
+def _get_context(text: str, start: int, end: int, window: int = ENTITY_CONTEXT_WINDOW) -> str:
     """
     Get context snippet around a match.
     
@@ -263,17 +268,16 @@ def find_relationships(text: str, entities: Dict[str, List[Tuple[str, str]]]) ->
             if not positions1 or not positions2:
                 continue
             
-            # Find closest co-occurrences (within 500 characters)
-            proximity_threshold = 500
+            # Find closest co-occurrences
             close_occurrences = []
             
             for pos1 in positions1:
                 for pos2 in positions2:
                     distance = abs(pos1 - pos2)
-                    if distance <= proximity_threshold:
+                    if distance <= RELATIONSHIP_PROXIMITY_THRESHOLD:
                         # Get context around both mentions
-                        start = min(pos1, pos2) - 50
-                        end = max(pos1, pos2) + max(len(person1), len(person2)) + 50
+                        start = min(pos1, pos2) - ENTITY_CONTEXT_WINDOW
+                        end = max(pos1, pos2) + max(len(person1), len(person2)) + ENTITY_CONTEXT_WINDOW
                         start = max(0, start)
                         end = min(len(text), end)
                         context = text[start:end].replace('\n', ' ').strip()

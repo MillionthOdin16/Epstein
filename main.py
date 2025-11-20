@@ -23,8 +23,14 @@ from src.librarian import ingest_documents, detect_duplicates
 from src.detective import extract_entities, find_relationships
 from src.db import InvestigationDB
 
+# Configuration constants
+DEFAULT_DATA_DIRECTORY = 'data/processed/files'
+DEFAULT_DATABASE_PATH = 'investigation.db'
+DEFAULT_LOG_PATH = 'investigation.log'
+DEFAULT_FILE_EXTENSIONS = ['.txt', '.pdf', '.jpg', '.jpeg', '.png']
 
-def setup_logging(log_file: str = "investigation.log", verbose: bool = False):
+
+def setup_logging(log_file: str = DEFAULT_LOG_PATH, verbose: bool = False):
     """
     Configure logging for the investigation.
     
@@ -198,27 +204,27 @@ Examples:
     parser.add_argument(
         'directory',
         nargs='?',
-        default='data/processed/files',
-        help='Directory to scan for documents (default: data/processed/files)'
+        default=DEFAULT_DATA_DIRECTORY,
+        help=f'Directory to scan for documents (default: {DEFAULT_DATA_DIRECTORY})'
     )
     
     parser.add_argument(
         '--extensions',
         nargs='+',
-        default=['.txt', '.pdf', '.jpg', '.jpeg', '.png'],
-        help='File extensions to process (default: .txt .pdf .jpg .jpeg .png)'
+        default=DEFAULT_FILE_EXTENSIONS,
+        help=f'File extensions to process (default: {" ".join(DEFAULT_FILE_EXTENSIONS)})'
     )
     
     parser.add_argument(
         '--db',
-        default='investigation.db',
-        help='Path to SQLite database (default: investigation.db)'
+        default=DEFAULT_DATABASE_PATH,
+        help=f'Path to SQLite database (default: {DEFAULT_DATABASE_PATH})'
     )
     
     parser.add_argument(
         '--log',
-        default='investigation.log',
-        help='Path to log file (default: investigation.log)'
+        default=DEFAULT_LOG_PATH,
+        help=f'Path to log file (default: {DEFAULT_LOG_PATH})'
     )
     
     parser.add_argument(

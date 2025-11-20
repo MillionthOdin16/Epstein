@@ -13,6 +13,9 @@ import mimetypes
 
 logger = logging.getLogger(__name__)
 
+# Configuration constants
+MIN_TEXT_LENGTH_FOR_DIRECT_EXTRACTION = 100  # Minimum text length to consider direct PDF extraction successful
+
 # Try to import OCR dependencies
 try:
     import pytesseract
@@ -198,7 +201,7 @@ def extract_text_from_pdf(file_path: str) -> str:
                         text += page_text + "\n"
             
             # If we got substantial text, return it
-            if len(text.strip()) > 100:
+            if len(text.strip()) > MIN_TEXT_LENGTH_FOR_DIRECT_EXTRACTION:
                 logger.debug(f"Extracted text directly from PDF: {file_path}")
                 return text
         except Exception as e:
