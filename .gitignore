@@ -2,6 +2,9 @@
 data/raw/*.csv
 data/processed/files/
 data/images/
+data/*.db
+data/test_output/
+data/analysis_output/
 
 # Python cache
 __pycache__/
