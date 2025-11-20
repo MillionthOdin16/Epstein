@@ -32,7 +32,7 @@ class TimelineAuditor:
         self.dates = []  # List of (date, doc_id, doc_hash, page_number, filename, context)
         self.parsed_dates = []  # List of (datetime, doc_id, doc_hash, page_number, filename)
     
-    def extract_dates(self, text: str) -> List[Tuple[str, str]]:
+    def extract_dates(self, text: str) -> List[Tuple[str, str, str]]:
         """
         Extract dates from text with context.
         
@@ -40,7 +40,7 @@ class TimelineAuditor:
             text: Document text
             
         Returns:
-            List of (date_string, context) tuples
+            List of (date_string, context, date_format) tuples
         """
         dates = []
         

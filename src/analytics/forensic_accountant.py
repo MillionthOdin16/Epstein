@@ -23,6 +23,11 @@ class ForensicAccountant:
     Analyzes financial patterns to detect anomalies.
     """
     
+    # Currency extraction patterns
+    DOLLAR_SIGN_PATTERN = r'\$\s*([\d,]+\.?\d*)'  # $1,234.56 or $1,234 or $1234.56
+    USD_PREFIX_PATTERN = r'USD\s*([\d,]+\.?\d*)'  # USD 1,234.56
+    DOLLARS_SUFFIX_PATTERN = r'([\d,]+\.?\d*)\s*(?:dollars|USD)'  # 1,234.56 dollars
+    
     def __init__(self, db_path: str = "data/epstein_analysis.db"):
         """
         Initialize the Forensic Accountant.
@@ -51,11 +56,11 @@ class ForensicAccountant:
         """
         amounts = []
         
-        # Pattern for currency amounts: $X,XXX.XX or $X.XX or $X,XXX
+        # Use class constant patterns for better maintainability
         patterns = [
-            r'\$\s*([\d,]+\.?\d*)',  # $1,234.56 or $1,234 or $1234.56
-            r'USD\s*([\d,]+\.?\d*)',  # USD 1,234.56
-            r'([\d,]+\.?\d*)\s*(?:dollars|USD)',  # 1,234.56 dollars
+            self.DOLLAR_SIGN_PATTERN,
+            self.USD_PREFIX_PATTERN,
+            self.DOLLARS_SUFFIX_PATTERN,
         ]
         
         for pattern in patterns:

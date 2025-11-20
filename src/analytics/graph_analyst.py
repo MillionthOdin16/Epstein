@@ -37,6 +37,11 @@ class GraphAnalyst:
         Extract entity names from text.
         Uses simple heuristics to find capitalized names (2-3 words).
         
+        Pattern matches names like:
+        - "John Smith" (2 words)
+        - "John F Kennedy" (3 words)
+        - "Donald Trump" (2 words)
+        
         Args:
             text: Document text
             
@@ -44,11 +49,12 @@ class GraphAnalyst:
             Set of entity names
         """
         # Pattern for capitalized names (2-3 words)
+        # Matches: Capital letter + lowercase letters, repeated 2-3 times
         # This is a simple pattern; in production you'd use spaCy NER
-        pattern = r'\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,2}\b'
+        ENTITY_PATTERN = r'\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,2}\b'
         
         entities = set()
-        matches = re.findall(pattern, text)
+        matches = re.findall(ENTITY_PATTERN, text)
         
         for match in matches:
             # Filter out common words and short names

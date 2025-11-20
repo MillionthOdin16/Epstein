@@ -45,17 +45,19 @@ class Cartographer:
         'BOS': ('Boston Logan International Airport', 42.3656, -71.0096),
     }
     
-    def __init__(self, db_path: str = "data/epstein_analysis.db"):
+    def __init__(self, db_path: str = "data/epstein_analysis.db", geocode_delay: float = 1.0):
         """
         Initialize the Cartographer.
         
         Args:
             db_path: Path to the SQLite database
+            geocode_delay: Delay in seconds between geocoding API calls (default: 1.0)
         """
         self.db_path = db_path
         self.locations = []  # List of (location, date, doc_id, doc_hash, page, filename)
         self.geolocator = Nominatim(user_agent="epstein_cartographer")
         self.geocode_cache = {}
+        self.geocode_delay = geocode_delay  # Configurable rate limiting
     
     def extract_airport_codes(self, text: str) -> List[str]:
         """
@@ -158,7 +160,7 @@ class Cartographer:
         
         # Try geocoding
         try:
-            time.sleep(1)  # Rate limiting
+            time.sleep(self.geocode_delay)  # Configurable rate limiting
             location_data = self.geolocator.geocode(location)
             if location_data:
                 coords = (location_data.latitude, location_data.longitude)
