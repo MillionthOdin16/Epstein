@@ -1,0 +1,2 @@
+# Core dependencies for the investigation system
+# No external dependencies needed - using only Python standard library
