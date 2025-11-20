@@ -36,7 +36,6 @@ jobs:
       
       - name: Run orchestrator
         run: |
-          cd /home/runner/work/Epstein/Epstein
           python src/orchestrator.py
       
       - name: Configure Git
