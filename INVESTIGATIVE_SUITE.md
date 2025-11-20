@@ -92,6 +92,33 @@ python main.py --stats-only
 python main.py data/ --db my_investigation.db --log my_investigation.log
 ```
 
+### Query and Explore the Database
+
+After processing documents, use the query script to explore results:
+
+```bash
+# Show statistics
+python query.py --stats
+
+# List documents
+python query.py --docs
+
+# List entities by type
+python query.py --entities PERSON
+python query.py --entities MONEY --limit 50
+
+# Search for specific entities
+python query.py --search "John Smith"
+python query.py --search "$1000"
+```
+
+### Run the Example
+
+See a demonstration of programmatic API usage:
+```bash
+python example.py
+```
+
 ## Module Overview
 
 ### src/librarian.py - Document Ingestion
@@ -125,6 +152,23 @@ Entry point that coordinates:
 3. Entity extraction
 4. Database storage
 5. Error handling and logging
+
+### query.py - Database Explorer
+
+Interactive query tool for exploring investigation results:
+- `--stats`: Display database statistics (default)
+- `--docs`: List processed documents
+- `--entities TYPE`: List entities by type (PERSON, MONEY, DATE, all)
+- `--search TERM`: Search for specific entities
+- `--limit N`: Limit number of results
+
+### example.py - Usage Example
+
+Demonstrates programmatic API usage:
+- Creates sample documents
+- Shows complete workflow
+- Extracts and displays entities
+- Useful for integration reference
 
 ## Database Schema
 
