@@ -144,7 +144,10 @@ def find_bridges(db: InvestigationDB, min_connections: int = 2) -> List[Dict]:
     # Find entities with multiple connections
     cursor.execute("""
         SELECT e.id, e.name, e.entity_type, e.occurrence_count,
-               COUNT(DISTINCT ec.entity2_id) as unique_connections
+               COUNT(DISTINCT CASE 
+                   WHEN e.id = ec.entity1_id THEN ec.entity2_id 
+                   ELSE ec.entity1_id 
+               END) as unique_connections
         FROM entities e
         JOIN entity_connections ec ON (e.id = ec.entity1_id OR e.id = ec.entity2_id)
         GROUP BY e.id
