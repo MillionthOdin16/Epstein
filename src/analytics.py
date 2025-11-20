@@ -22,6 +22,27 @@ except ImportError:
     print("Warning: NetworkX not installed. Install with: pip install networkx")
 
 
+# Benford's Law expected distribution for first digits (1-9)
+BENFORDS_DISTRIBUTION = {
+    '1': 0.301,
+    '2': 0.176,
+    '3': 0.125,
+    '4': 0.097,
+    '5': 0.079,
+    '6': 0.067,
+    '7': 0.058,
+    '8': 0.051,
+    '9': 0.046
+}
+
+# Currency pattern regexes
+CURRENCY_PATTERNS = [
+    r'\$\s*(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)',  # $1,234.56
+    r'USD\s*(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)',  # USD 1,234.56
+    r'(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)\s*USD',  # 1,234.56 USD
+]
+
+
 class ConnectorEngine:
     """
     Graph theory-based engine for finding bridge entities (hidden handlers).
@@ -171,19 +192,7 @@ class AnomalyEngine:
             db: InvestigationDB instance
         """
         self.db = db
-        
-        # Benford's Law expected distribution for first digits (1-9)
-        self.benfords_distribution = {
-            '1': 0.301,
-            '2': 0.176,
-            '3': 0.125,
-            '4': 0.097,
-            '5': 0.079,
-            '6': 0.067,
-            '7': 0.058,
-            '8': 0.051,
-            '9': 0.046
-        }
+        self.benfords_distribution = BENFORDS_DISTRIBUTION
     
     def extract_currency_amounts(self, text: str) -> List[float]:
         """
@@ -197,15 +206,7 @@ class AnomalyEngine:
         """
         amounts = []
         
-        # Pattern for various currency formats
-        # Matches: $1,234.56, $1234, USD 1,234.56, 1,234.56 USD, etc.
-        patterns = [
-            r'\$\s*(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)',  # $1,234.56
-            r'USD\s*(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)',  # USD 1,234.56
-            r'(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)\s*USD',  # 1,234.56 USD
-        ]
-        
-        for pattern in patterns:
+        for pattern in CURRENCY_PATTERNS:
             matches = re.findall(pattern, text, re.IGNORECASE)
             for match in matches:
                 # Remove commas and convert to float
