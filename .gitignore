@@ -24,3 +24,9 @@ ENV/
 # OS
 .DS_Store
 Thumbs.db
+
+# Investigation suite
+investigation.db
+investigation.log
+*.db
+*.log
