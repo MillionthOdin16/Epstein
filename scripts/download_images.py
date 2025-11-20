@@ -26,13 +26,20 @@ def download_from_gdrive():
     # Configuration
     folder_id = "1hTNH5woIRio578onLGElkTWofUSWRoH_"
     folder_url = f"https://drive.google.com/drive/folders/{folder_id}"
-    output_dir = Path("data/images/gdrive_download")
+    
+    # Note: gdown will create a subdirectory with the folder name
+    # The actual files will be in: data/images/Epstein Estate Documents - Seventh Production/
+    output_dir = Path("data/images")
     
     print("="*60)
     print("Epstein Files - Google Drive Image Downloader")
     print("="*60)
     print(f"\nSource: {folder_url}")
     print(f"Destination: {output_dir}")
+    print("\nNote: gdown will create a subdirectory with the Google Drive folder name.")
+    print("After download, manually reorganize files if needed:")
+    print("  - Move IMAGES/* to data/images/gdrive_images/")
+    print("  - Move DATA/* to data/images/gdrive_data/")
     print("\nNote: Due to Google Drive API rate limits, the download may be")
     print("interrupted after downloading many files. You can run this script")
     print("multiple times to resume downloading.")

@@ -62,11 +62,24 @@ def analyze_data():
     
     # Analyze Google Drive images
     gdrive_path = Path("data/images/gdrive_images")
+    gdrive_alt_path = Path("data/images/Epstein Estate Documents - Seventh Production/IMAGES")
+    
     print(f"\n3. Google Drive Images: {gdrive_path}")
     
+    # Check both possible locations
     if gdrive_path.exists():
         image_files = list(gdrive_path.rglob('*.jpg'))
         print(f"   Total image files: {len(image_files)}")
+    elif gdrive_alt_path.exists():
+        image_files = list(gdrive_alt_path.rglob('*.jpg'))
+        print(f"   Found in alternative location: {gdrive_alt_path}")
+        print(f"   Total image files: {len(image_files)}")
+        print(f"   💡 Tip: Reorganize by moving to {gdrive_path}")
+    else:
+        print(f"   ✗ Not found. Run: python3 scripts/download_images.py")
+        image_files = []
+    
+    if image_files:
         
         # Organize by source
         by_source = defaultdict(int)
@@ -111,19 +124,28 @@ def analyze_data():
                 print(f"\n   Example matches:")
                 for basename in sorted(matches)[:3]:
                     print(f"     - {basename}")
-    else:
-        print(f"   ✗ Not found. Run: python3 scripts/download_images.py")
     
     # Check for additional data files
     gdrive_data_path = Path("data/images/gdrive_data")
-    print(f"\n5. Additional Data Files: {gdrive_data_path}")
+    gdrive_alt_data_path = Path("data/images/Epstein Estate Documents - Seventh Production/DATA")
     
+    print(f"\n4. Additional Data Files: {gdrive_data_path}")
+    
+    # Check both possible locations
     if gdrive_data_path.exists():
         data_files = list(gdrive_data_path.rglob('*.*'))
         print(f"   Total data files: {len(data_files)}")
         for df in data_files:
             size_mb = df.stat().st_size / (1024 * 1024)
             print(f"     - {df.name} ({size_mb:.2f} MB)")
+    elif gdrive_alt_data_path.exists():
+        data_files = list(gdrive_alt_data_path.rglob('*.*'))
+        print(f"   Found in alternative location: {gdrive_alt_data_path}")
+        print(f"   Total data files: {len(data_files)}")
+        for df in data_files:
+            size_mb = df.stat().st_size / (1024 * 1024)
+            print(f"     - {df.name} ({size_mb:.2f} MB)")
+        print(f"   💡 Tip: Reorganize by moving to {gdrive_data_path}")
     else:
         print(f"   ✗ Not found")
     
