@@ -3,6 +3,11 @@ data/raw/*.csv
 data/processed/files/
 data/images/
 
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
 # Python cache
 __pycache__/
 *.py[cod]
