@@ -77,7 +77,7 @@ def download_from_gdrive():
             print("\nYou can run this script again to attempt downloading more files.")
         
         # Don't exit with error if we got some files
-        if output_dir.exists() and any(output_dir.rglob('*')):
+        if output_dir.exists() and next(output_dir.rglob('*'), None) is not None:
             print("\nPartial download successful.")
             sys.exit(0)
         else:
