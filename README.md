@@ -2,6 +2,18 @@
 
 This repository contains the Epstein Files dataset from multiple sources, organized for easy access and analysis.
 
+## 🤖 Automated Investigation System
+
+This repository features an **automated investigation system** that runs daily at 3 AM UTC via GitHub Actions. The system:
+
+- 🔍 **Scans** for new documents in the dataset
+- 🧠 **Analyzes** documents using statistical methods (Benford's Law)
+- 🔗 **Maps** entity relationships and identifies "bridge" connections
+- 🚨 **Flags** suspicious documents and generates investigation leads
+- 📊 **Reports** findings in a daily briefing (`DAILY_BRIEFING.md`)
+
+See [`src/README.md`](src/README.md) for technical details.
+
 ## Dataset Overview
 
 ### Text Data (Hugging Face)
