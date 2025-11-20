@@ -2,6 +2,31 @@
 
 This repository contains the Epstein Files dataset from multiple sources, organized for easy access and analysis.
 
+## 🔍 Forensic Analysis Suite
+
+**NEW:** This repository now includes a complete forensic analysis suite with four specialized modules:
+
+### Quick Start - Run Forensic Analysis
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Setup database and run all analyses
+python src/run_analysis.py --setup --all
+
+# Results will be in data/analysis_output/
+```
+
+### Analysis Modules
+
+1. **Graph Analyst** - Network topology and bridge node detection
+2. **Forensic Accountant** - Benford's Law & round number anomaly detection
+3. **Cartographer** - Geospatial correlation of locations and dates
+4. **Timeline Auditor** - Gap analysis to find "silence intervals"
+
+See [`src/analytics/README.md`](src/analytics/README.md) for detailed documentation.
+
 ## Dataset Overview
 
 ### Text Data (Hugging Face)
@@ -240,6 +265,90 @@ python3 scripts/analyze_data.py
 - Shows statistics for text files (Hugging Face)
 - Shows statistics for image files (Google Drive)
 - Analyzes correspondence between text and images
+- Reports files with both text and images
+
+## Forensic Analysis Tools
+
+### run_analysis.py
+
+Located in `src/run_analysis.py`, this is the main entry point for forensic analysis.
+
+**Quick Start:**
+```bash
+# Install dependencies first
+pip install -r requirements.txt
+
+# Setup database and run all analyses
+python src/run_analysis.py --setup --all
+```
+
+**Individual Modules:**
+```bash
+# Run specific analyses
+python src/run_analysis.py --graph        # Network topology
+python src/run_analysis.py --financial    # Financial patterns
+python src/run_analysis.py --geo          # Geospatial analysis
+python src/run_analysis.py --timeline     # Timeline gaps
+```
+
+**Testing with Limited Data:**
+```bash
+# Process only 100 documents (for testing)
+python src/run_analysis.py --setup --all --limit 100
+```
+
+### Output Files
+
+All analyses generate reports in `data/analysis_output/`:
+
+- `bridge_report.csv` - Top 50 bridge nodes (network connectors)
+- `network.gexf` - Full network graph (open with Gephi)
+- `financial_analysis_report.csv` - Benford's Law & round number analysis
+- `flight_map.html` - Interactive map of locations and dates
+- `location_report.csv` - All location mentions
+- `silence_report.md` - Timeline gap analysis
+- `timeline_data.csv` - All extracted dates
+
+**All outputs include source_document_hash and page_number for verification.**
+
+### Module Details
+
+#### 1. Graph Analyst (Network Topology)
+- Extracts entity names from documents
+- Builds co-occurrence graph using NetworkX
+- Calculates betweenness centrality to find "bridge nodes"
+- Bridge nodes are people who connect otherwise disconnected groups
+
+#### 2. Forensic Accountant (Financial Pattern Recognition)
+- Extracts currency amounts from documents
+- **Benford's Law Test**: Detects fabricated financial data by analyzing leading digit distribution
+- **Round Number Anomaly**: Flags suspicious patterns (e.g., too many $10,000 payments vs $9,842)
+- High frequency of round numbers often indicates laundering or bribes
+
+#### 3. Cartographer (Geospatial Correlation)
+- Extracts airport codes (KTEB, TJSJ, JFK, etc.) and city names
+- Cross-references locations with dates from the same documents
+- Generates interactive HTML map with pins for each location
+- Links flight logs to meetings and events
+
+#### 4. Timeline Auditor (Gap Analysis)
+- Extracts all dates from documents
+- Identifies "silence intervals" (>20 days with no communications)
+- Criminal activity often occurs during communication gaps
+- Reports include documents immediately before and after each gap
+
+### Example Usage (Programmatic)
+
+See `examples/forensic_analysis_demo.py` for programmatic usage examples.
+
+```python
+from analytics.graph_analyst import GraphAnalyst
+
+# Initialize and run analysis
+analyst = GraphAnalyst(db_path="data/epstein_analysis.db")
+analyst.build_graph(limit=100)
+bridge_nodes = analyst.calculate_bridge_nodes(top_n=10)
+```
 - Reports files with both text and images
 
 ## Requirements
